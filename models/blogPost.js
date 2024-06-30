@@ -6,6 +6,7 @@ const BlogPostSchema = new Schema({
   text: { type: String, required: true },
   author: { type: Schema.Types.ObjectId, ref: 'User', required: true },
   timestamp: { type: Date, required: true },
+  isPublished: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('BlogPost', BlogPostSchema);
