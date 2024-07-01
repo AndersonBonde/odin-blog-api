@@ -22,6 +22,12 @@ async function main() {
 }
 main().catch((err) => console.log(err));
 
+// --- Passport LocalStrategy & serialization setup.
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const User = require('./models/user');
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
