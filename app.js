@@ -1,15 +1,15 @@
 require('dotenv').config();
 
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-var app = express();
+const app = express();
 
 // --- Mongoose setup.
 const mongoose = require('mongoose');
@@ -26,7 +26,41 @@ main().catch((err) => console.log(err));
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
+const { validatePassword } = require('./lib/passportUtils');
 
+const strategy = new LocalStrategy({
+  usernameField: 'email',
+  passwordField: 'password',
+},
+(email, password, done) => {
+  User.findOne({ email })
+    .then((user) => {
+      if (!user) return done(null, false);
+
+      const { hash, salt } = user;
+      const isValid = validatePassword(password, hash, salt);
+
+      if (isValid) {
+        return done(null, user);
+      } else {
+        return done(null, false);
+      }
+    })
+    .catch((err) => done(err));
+});
+passport.use(strategy);
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((userId, done) => {
+  User.findById(userId)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch((err) => done(err));
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
