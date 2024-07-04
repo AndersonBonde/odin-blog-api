@@ -22,11 +22,15 @@ async function main() {
 }
 main().catch((err) => console.log(err));
 
+// --- Passport jwtStrategy setup.
+
+
+
 // --- Passport LocalStrategy & serialization setup.
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const User = require('./models/user');
-const { validatePassword } = require('./lib/passportUtils');
+const { validatePassword } = require('./lib/passwordUtils');
 
 const strategy = new LocalStrategy({
   usernameField: 'email',
