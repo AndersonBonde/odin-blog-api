@@ -11,60 +11,51 @@ const usersRouter = require('./routes/users');
 
 const app = express();
 
-// --- Mongoose setup.
-const mongoose = require('mongoose');
-const mongoDB = process.env.MONGO_DATABASE_KEY;
+// --- DATABASE config
+require('./config/database');
 
-mongoose.set('strictQuery', false);
-
-async function main() {
-  await mongoose.connect(mongoDB);
-}
-main().catch((err) => console.log(err));
-
-// --- Passport jwtStrategy setup.
-
-
+// --- Passport jwtStrategy config
+const passport = require('passport');
+require('./config/passport')(passport);
 
 // --- Passport LocalStrategy & serialization setup.
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const User = require('./models/user');
-const { validatePassword } = require('./lib/passwordUtils');
+// const LocalStrategy = require('passport-local').Strategy;
+// const User = require('./models/user');
+// const { validatePassword } = require('./lib/passwordUtils');
 
-const strategy = new LocalStrategy({
-  usernameField: 'email',
-  passwordField: 'password',
-},
-(email, password, done) => {
-  User.findOne({ email })
-    .then((user) => {
-      if (!user) return done(null, false);
+// const strategy = new LocalStrategy({
+//   usernameField: 'email',
+//   passwordField: 'password',
+// },
+// (email, password, done) => {
+//   User.findOne({ email })
+//     .then((user) => {
+//       if (!user) return done(null, false);
 
-      const { hash, salt } = user;
-      const isValid = validatePassword(password, hash, salt);
+//       const { hash, salt } = user;
+//       const isValid = validatePassword(password, hash, salt);
 
-      if (isValid) {
-        return done(null, user);
-      } else {
-        return done(null, false);
-      }
-    })
-    .catch((err) => done(err));
-});
-passport.use(strategy);
+//       if (isValid) {
+//         return done(null, user);
+//       } else {
+//         return done(null, false);
+//       }
+//     })
+//     .catch((err) => done(err));
+// });
+// passport.use(strategy);
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
+// passport.serializeUser((user, done) => {
+//   done(null, user.id);
+// });
 
-passport.deserializeUser((userId, done) => {
-  User.findById(userId)
-    .then((user) => {
-      done(null, user);
-    })
-    .catch((err) => done(err));
-});
+// passport.deserializeUser((userId, done) => {
+//   User.findById(userId)
+//     .then((user) => {
+//       done(null, user);
+//     })
+//     .catch((err) => done(err));
+// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -76,8 +67,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
+// --- Import all the routes from ./routes/index.js
+app.use(require('./routes'));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
