@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
-const { generatePassword, issueJWT } = require('../lib/passwordUtils');
+const { generatePassword, validatePassword, issueJWT } = require('../lib/passwordUtils');
 
 // --- GET home page.
 router.get('/', (req, res, next) => {
@@ -77,7 +77,23 @@ router.post('/signup', [
 
 // --- POST login.
 router.post('/login', (req, res, next) => {
+  User.findOne({ email: req.body.email })
+    .then((user) => {
+      if (!user) {
+        res.status(401).json({ success: false, msg: 'User not found' });
+      }
 
+      const isValid = validatePassword(req.body.password, user.hash, user.salt);
+
+      if (isValid) {
+        const jwt = issueJWT(user);
+
+        res.status(200).json({ success: true, user: user, token: jwt.token, expiresIn: jwt.expires });
+      } else {
+        res.status(401).json({ success: false, msg: 'You entered the wrong password' });
+      }
+    })
+    .catch((err) => next(err));
 })
 
 // --- GET mock/route.
