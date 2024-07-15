@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 const User = require('../models/user');
 const { body, validationResult } = require('express-validator');
 const { generatePassword, validatePassword, issueJWT } = require('../lib/passwordUtils');
@@ -11,7 +12,7 @@ router.get('/', (req, res, next) => {
 
 // --- GET signup.
 router.get('/signup', (req, res, next) => {
-  res.json({ title: 'Sign Up', message: 'Pretty signup page goes here' });
+  res.json({ title: 'Sign Up', msg: 'Pretty signup page goes here' });
 });
 
 // --- POST signup.
@@ -96,19 +97,11 @@ router.post('/login', (req, res, next) => {
     .catch((err) => next(err));
 })
 
-// --- GET mock/route.
-router.get('/mock/route', (req, res, next) => {
-  res.json({
-    message: 'Mock GET route accessed...',
-  })
-})
-
-// --- POST mock/route.
-router.post('/mock/route', (req, res, next) => {
-  res.json({
-    message: 'Mock POST route accessed...',
+router.get('/protected', passport.authenticate('jwt', { session: false }), (req, res, next) => {
+  res.status(200).json({
+    success: true,
+    msg: 'Welcome to the protected route',
   })
 });
-
 
 module.exports = router;
