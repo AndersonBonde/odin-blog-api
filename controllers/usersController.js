@@ -30,7 +30,7 @@ const registerPost = [
   async (req, res, next) => {
     const errors = validationResult(req);
     const info = { 
-      firstname: req.body.firstname, 
+    firstname: req.body.firstname, 
       lastname: req.body.lastname, 
       email: req.body.email 
     };
