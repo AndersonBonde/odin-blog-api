@@ -36,7 +36,7 @@ const registerPost = [
     };
 
     if (!errors.isEmpty()) {
-      res.status(400).json({ errors, info });
+      res.status(400).json({ message: 'Error registering new user', errors, info });
     } else {
       bcrypt.hash(req.body.password, 10, async(err, hashedPassword) => {
         if (err) next(err);
