@@ -89,7 +89,7 @@ const logoutGet = (req, res) => {
 const protectedGet = [
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    res.status(200).json({ message: 'You are authorized '});
+    res.status(200).json({ message: `You are authorized, user: ${req.user.firstname} ${req.user.lastname}, id: ${req.user.id}`});
   }
 ];
 
