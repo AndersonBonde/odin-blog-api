@@ -3,7 +3,11 @@ const { body, validationResult } = require('express-validator');
 const passport = require('passport');
 
 const postsListGet = async (req, res) => {
-  const blogPosts = await prisma.blogPost.findMany();
+  const blogPosts = await prisma.blogPost.findMany({
+    include: {
+      author: true
+    }
+  });
 
   res.json({ message: `List of all posts fetched successfully, count: ${blogPosts.length}`, blogPosts });
 }
