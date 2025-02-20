@@ -37,7 +37,17 @@ const createPostPost = [
   }
 ];
 
+const createPostComment = [
+  async (req, res) => {
+    const comment = req.body.comment;
+    const postId = req.body.postId;
+
+    res.status(201).json({ message: 'Comment created successfully' });
+  }
+];
+
 module.exports = {
   postsListGet,
   createPostPost,
+  createPostComment,
 }
