@@ -37,10 +37,21 @@ const createPostPost = [
   }
 ];
 
+const getAllComments = async (req, res) => {
+  const comments = await prisma.comment.findMany({
+    where: {
+      blogPostId: Number(req.params.id)
+    }
+  });
+
+  res.json({ message: `List of all comments from post with id: ${req.params.id} fetched successfully, count: ${comments.length}`, comments });
+};
+
 const createPostComment = [
   async (req, res) => {
     const comment = req.body.comment;
     const postId = req.body.postId;
+    const authorId = req.body.authorId;
 
     res.status(201).json({ message: 'Comment created successfully' });
   }
@@ -49,5 +60,6 @@ const createPostComment = [
 module.exports = {
   postsListGet,
   createPostPost,
+  getAllComments,
   createPostComment,
 }
