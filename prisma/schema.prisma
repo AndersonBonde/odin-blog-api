@@ -29,7 +29,6 @@ model BlogPost {
 
 model Comment {
   id         Int      @id @default(autoincrement())
-  title      String
   content    String
   uploadAt   DateTime @default(now())
   author     User?    @relation(fields: [authorId], references: [id])
