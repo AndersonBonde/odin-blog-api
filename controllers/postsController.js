@@ -49,11 +49,15 @@ const getAllComments = async (req, res) => {
 
 const createPostComment = [
   async (req, res) => {
-    const comment = req.body.comment;
-    const postId = req.body.postId;
-    const authorId = req.body.authorId;
+    const newComment = await prisma.comment.create({
+      data: {
+        content: req.body.comment,
+        authorId: req.body.authorId,
+        blogPostId: req.body.postId
+      }
+    });
 
-    res.status(201).json({ message: 'Comment created successfully' });
+    res.status(201).json({ message: 'Comment created successfully', newComment });
   }
 ];
 
