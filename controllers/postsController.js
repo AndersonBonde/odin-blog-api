@@ -41,6 +41,9 @@ const getAllComments = async (req, res) => {
   const comments = await prisma.comment.findMany({
     where: {
       blogPostId: Number(req.params.id)
+    },
+    include: {
+      author: true
     }
   });
 
@@ -61,9 +64,20 @@ const createPostComment = [
   }
 ];
 
+const deletePostComment = async (req, res) => {
+  await prisma.comment.delete({
+    where: {
+      id: +req.params.id
+    }
+  });
+
+  res.status(200).json({ message: `Comment with id: ${req.params.id} was successfully deleted` });
+};
+
 module.exports = {
   postsListGet,
   createPostPost,
   getAllComments,
   createPostComment,
+  deletePostComment,
 }
